@@ -7,7 +7,7 @@ let notesData = require("../data/notes.json");
 const dbPath = path.join(__dirname, "../data", "notes.json");
 
 //* Method: GET
-//* /notes/getAllNotes
+//* URL: /notes/getAllNotes
 const getAllNotes = (req, res) => {
     try {
         res.status(200).json(notesData);
@@ -15,12 +15,12 @@ const getAllNotes = (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
-
+//* Method: GET
+//* URL: /notes/getOneNote
 const getOneNote = (req, res) => {
     try {
         const id = req.params.id;
         const note = notesData.find((note) => note.id === id);
-        console.log(note);
         if (!note) {
             res.status(404).json({ message: "Note not found" });
         } else {
@@ -31,6 +31,38 @@ const getOneNote = (req, res) => {
     }
 };
 
+const getCodingNotes = async (req, res) => {
+    try {
+        const codingNotes = notesData.filter(
+            (note) => note.category === "coding"
+        );
+        if (!codingNotes.length) {
+            return res.status(404).json({ message: "No coding notes found" });
+        } else {
+            return res.status(200).json(codingNotes);
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+const getRandomNotes = async (req, res) => {
+    try {
+        const randomNotes = notesData.filter(
+            (note) => note.category === "random"
+        );
+        if (!randomNotes.length) {
+            return res.status(404).json({ message: "No random notes found" });
+        } else {
+            return res.status(200).json(randomNotes);
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+//* Method: POST
+//* URL: /notes/addNote
 const addNote = async (req, res) => {
     try {
         let errors = [];
@@ -54,12 +86,15 @@ const addNote = async (req, res) => {
         );
         res.status(201).json({
             message: `A note titled '${title}' has been added`,
+            notesData,
         });
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
     }
 };
 
+//* Method: PUT
+//* URL: /notes/updateNote/:id
 const updateNote = async (req, res) => {
     try {
         const reqBody = req.body;
@@ -84,33 +119,35 @@ const updateNote = async (req, res) => {
         );
         res.status(201).json({
             message: `A note titled '${reqBody.title}' has been updated`,
+            notesData,
         });
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
     }
 };
 
+//* Method: DELETE
+//* URL: /notes/deleteNote/:id
 const deleteNote = async (req, res) => {
     try {
         const id = req.params.id;
-
         const noteToDelete = notesData.find((note) => note.id == id);
-        // console.log("Deleted Note: ", noteToDelete);
+
         if (!noteToDelete)
             return res
                 .status(404)
                 .json({ message: "Note to delete not found" });
-        const updatedData = notesData.filter((note) => note.id !== id);
-        console.log(notesData);
+        notesData = notesData.filter((note) => note.id !== id);
+
         fs.writeFile(
             dbPath,
-            JSON.stringify(updatedData, null, 2),
+            JSON.stringify(notesData, null, 2),
             "utf-8",
             (error) => {
                 if (error) throw error;
-                notesData = updatedData;
                 res.status(201).json({
                     message: `A note titled '${noteToDelete.title}' has been deleted`,
+                    notesData,
                 });
             }
         );
@@ -122,6 +159,8 @@ const deleteNote = async (req, res) => {
 module.exports = {
     getAllNotes,
     getOneNote,
+    getRandomNotes,
+    getCodingNotes,
     addNote,
     updateNote,
     deleteNote,
