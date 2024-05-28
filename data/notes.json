@@ -1,0 +1,44 @@
+[
+  {
+    "id": "f73612fc-87bb-41fc-a860-7567cf85d662",
+    "category": "coding",
+    "title": "Linux Tips",
+    "noteBody": "The quick brown fox jump over the lazy dog near the side of the river bank"
+  },
+  {
+    "id": "2c0f6988-4176-4585-bf3e-913f7141c7cb",
+    "category": "random",
+    "title": "Powershell for Begginers",
+    "noteBody": "Learning powershell for begginers"
+  },
+  {
+    "id": "1d82d389-d258-4eb0-b413-b336740ac6a6",
+    "category": "random",
+    "title": "Express JS with MongoDB",
+    "noteBody": "This is a lessons for express js with mongodb"
+  },
+  {
+    "id": "160cb302-91ca-4c4b-acb5-4dec2092e944",
+    "category": "random",
+    "title": "Debian tips and productivity",
+    "noteBody": "The quick brown fox jump over the lazy dog near the side of the river bank"
+  },
+  {
+    "id": "92817139-5815-450f-8326-c3ae85993433",
+    "category": "random",
+    "title": "My accounts and passwords",
+    "noteBody": "list of my accounts"
+  },
+  {
+    "id": "60c718de-c297-4ac4-8671-e5a3f19c64f3",
+    "category": "Coding",
+    "title": "Nodejs using http module",
+    "noteBody": "Basic of nodejs with http module"
+  },
+  {
+    "id": "e8e3786b-2e57-4605-a451-341955384a49",
+    "category": "coding",
+    "title": "Bash Scripting",
+    "noteBody": "This is the introduction into bash scripting in Linux environment"
+  }
+]
