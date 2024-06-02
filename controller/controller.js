@@ -2,59 +2,35 @@ const fsPromise = require("fs").promises;
 const fs = require("fs");
 const path = require("path");
 const { v4: uuid } = require("uuid");
+
+const Notes = require("../models/Notes");
 let notesData = require("../data/notes.json");
 
 const dbPath = path.join(__dirname, "../data", "notes.json");
 
 //* Method: GET
 //* URL: /notes/getAllNotes
-const getAllNotes = (req, res) => {
+const getAllNotes = async (req, res) => {
     try {
-        res.status(200).json(notesData);
+        const allNotes = await Notes.find({});
+        res.status(200).json({ allNotes });
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({
+            message: "Internal Server Error",
+            error: error.message,
+        });
     }
 };
 //* Method: GET
 //* URL: /notes/getOneNote
-const getOneNote = (req, res) => {
+const getOneNote = async (req, res) => {
     try {
         const id = req.params.id;
-        const note = notesData.find((note) => note.id === id);
-        if (!note) {
+        const foundNote = await Notes.findById(id);
+        if (!foundNote) {
             res.status(404).json({ message: "Note not found" });
         } else {
-            res.status(200).json(note);
-        }
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-const getCodingNotes = async (req, res) => {
-    try {
-        const codingNotes = notesData.filter(
-            (note) => note.category === "coding"
-        );
-        if (!codingNotes.length) {
-            return res.status(404).json({ message: "No coding notes found" });
-        } else {
-            return res.status(200).json(codingNotes);
-        }
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-const getRandomNotes = async (req, res) => {
-    try {
-        const randomNotes = notesData.filter(
-            (note) => note.category === "random"
-        );
-        if (!randomNotes.length) {
-            return res.status(404).json({ message: "No random notes found" });
-        } else {
-            return res.status(200).json(randomNotes);
+            res.status(200).json({ foundNote });
         }
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error" });
@@ -78,15 +54,14 @@ const addNote = async (req, res) => {
             : "";
 
         if (errors.length) return res.status(400).json(errors);
-        notesData.push({ id: uuid(), category, title, noteBody });
-        await fsPromise.writeFile(
-            dbPath,
-            JSON.stringify(notesData, null, 2),
-            "utf-8"
-        );
+        const newlyAddedNote = await new Notes({
+            category,
+            title,
+            noteBody,
+        }).save();
         res.status(201).json({
-            message: `A note titled '${title}' has been added`,
-            notesData,
+            message: `A New note with a title of ${newlyAddedNote.title} has been added`,
+            newlyAddedNote,
         });
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
@@ -100,26 +75,18 @@ const updateNote = async (req, res) => {
         const reqBody = req.body;
         const id = req.params.id;
 
-        let indexNum = 0;
+        const noteToUpdate = await Notes.findById(id);
+        if (!noteToUpdate)
+            return res.status(404).json({ message: "Note not found" });
 
-        const foundNote = notesData.find((note, index) => {
-            if (note.id === id) {
-                indexNum = index;
-                return note;
-            }
+        await Notes.findByIdAndUpdate(id, {
+            $set: reqBody,
         });
 
-        if (!foundNote)
-            return res.status(404).json({ message: "Note not found" });
-        notesData[indexNum] = reqBody;
-        await fsPromise.writeFile(
-            dbPath,
-            JSON.stringify(notesData, null, 2),
-            "utf-8"
-        );
+        const updatedNote = await Notes.findById(id);
         res.status(201).json({
-            message: `A note titled '${reqBody.title}' has been updated`,
-            notesData,
+            message: `A note titled '${updatedNote.title}' has been updated`,
+            updatedNote,
         });
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
@@ -131,26 +98,18 @@ const updateNote = async (req, res) => {
 const deleteNote = async (req, res) => {
     try {
         const id = req.params.id;
-        const noteToDelete = notesData.find((note) => note.id == id);
+        const noteToDelete = await Notes.findById(id);
 
         if (!noteToDelete)
             return res
                 .status(404)
                 .json({ message: "Note to delete not found" });
-        notesData = notesData.filter((note) => note.id !== id);
 
-        fs.writeFile(
-            dbPath,
-            JSON.stringify(notesData, null, 2),
-            "utf-8",
-            (error) => {
-                if (error) throw error;
-                res.status(201).json({
-                    message: `A note titled '${noteToDelete.title}' has been deleted`,
-                    notesData,
-                });
-            }
-        );
+        const deletedNote = await Notes.findByIdAndDelete(id);
+        res.status(200).json({
+            message: `A note with a title of ${deletedNote.title} has been deleted`,
+            deletedNote,
+        });
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
     }
@@ -159,8 +118,6 @@ const deleteNote = async (req, res) => {
 module.exports = {
     getAllNotes,
     getOneNote,
-    getRandomNotes,
-    getCodingNotes,
     addNote,
     updateNote,
     deleteNote,

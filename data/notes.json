@@ -1,11 +1,5 @@
 [
   {
-    "id": "2c0f6988-4176-4585-bf3e-913f7141c7cb",
-    "category": "random",
-    "title": "Powershell for Begginers",
-    "noteBody": "Learning powershell for begginers"
-  },
-  {
     "id": "1d82d389-d258-4eb0-b413-b336740ac6a6",
     "category": "random",
     "title": "Express JS with MongoDB",
@@ -14,19 +8,19 @@
   {
     "id": "60c718de-c297-4ac4-8671-e5a3f19c64f3",
     "category": "Coding",
-    "title": "Nodejs using http module",
+    "title": "Nodejs",
     "noteBody": "Basic of nodejs with http module"
   },
   {
-    "id": "e8e3786b-2e57-4605-a451-341955384a49",
-    "category": "coding",
-    "title": "Bash Scripting",
-    "noteBody": "This is the introduction into bash scripting in Linux environment"
+    "id": "3cb6da07-beb5-47e6-8f28-565d23337ff7",
+    "category": "random",
+    "title": "Nextjs Serveside Rendering",
+    "noteBody": "dhdhfdh"
   },
   {
-    "id": "b4bd6fbf-1a3f-40f3-95aa-04804b4960ff",
+    "id": "c6dc7a63-09a5-4c0d-bdf4-3b6445b000f6",
     "category": "random",
-    "title": "Debian tips for productivity",
-    "noteBody": "The quick brown fox jump over the lazy dog near the side of the river bank"
+    "title": "Debian Lessons",
+    "noteBody": "afdsafsdafsdafdsafsdafsdasfsd"
   }
 ]
