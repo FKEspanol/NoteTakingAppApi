@@ -1,12 +1,4 @@
-const fsPromise = require("fs").promises;
-const fs = require("fs");
-const path = require("path");
-const { v4: uuid } = require("uuid");
-
 const Notes = require("../models/Notes");
-let notesData = require("../data/notes.json");
-
-const dbPath = path.join(__dirname, "../data", "notes.json");
 
 //* Method: GET
 //* URL: /notes/getAllNotes
